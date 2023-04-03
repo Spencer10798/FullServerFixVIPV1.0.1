@@ -4,6 +4,8 @@
 
 To Install this mod, ensure you have the LiFx FrameWork installed [Download here](https://lifxmod.com/)
 
+Place the mod into the mods folder.
+
 
 ### Using the mod
 
