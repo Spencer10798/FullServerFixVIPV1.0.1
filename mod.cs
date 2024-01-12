@@ -43,7 +43,7 @@ package LiFxFullServerFixVIP
     return "v0.1.AFK";
   }
 
-  function LiFxFullServerFixVIP::onProcessTick(%this, %client) {
+  function LiFxFullServerFixVIP::onProcessTick(%this) {
     dbi.Select(LiFxFullServerFixVIP, "AFKKick", "SELECT c.ID AS ClientId, lc.active as Active FROM `lifx_character` lc LEFT JOIN `character` c ON c.ID = lc.id WHERE TIMESTAMPDIFF(MINUTE,c.LastUpdated,CURRENT_TIMESTAMP) > " @ $LiFx::FullServerFixIdleTimeout @ " ORDER BY lc.active DESC, TIMESTAMPDIFF(MINUTE,c.LastUpdated,CURRENT_TIMESTAMP) DESC LIMIT 1");
 
   }
