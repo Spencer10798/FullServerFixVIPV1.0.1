@@ -26,7 +26,6 @@ package LiFxFullServerFixVIP
     LiFx::registerCallback($LiFx::hooks::onPostConnectRoutineCallbacks, onPostConnectRequest, LiFxFullServerFixVIP);
     LiFx::registerCallback($LiFx::hooks::onInitServerDBChangesCallbacks, dbInit, LiFxFullServerFixVIP);
     LiFx::registerCallback($LiFx::hooks::onConnectCallbacks,onConnectClient, LiFxFullServerFixVIP);
-    LiFx::registerCallback($LiFx::hooks::onTick, onProcessTick, LiFxFullServerFixVIP);
   }
   
   function LiFxFullServerFixVIP::dbInit() {
@@ -43,11 +42,6 @@ package LiFxFullServerFixVIP
     return "v0.1.AFK";
   }
 
-  function LiFxFullServerFixVIP::onProcessTick(%this) {
-    dbi.Select(LiFxFullServerFixVIP, "AFKKick", "SELECT c.ID AS ClientId, lc.active as Active FROM `lifx_character` lc LEFT JOIN `character` c ON c.ID = lc.id WHERE TIMESTAMPDIFF(MINUTE,c.LastUpdated,CURRENT_TIMESTAMP) > " @ $LiFx::FullServerFixIdleTimeout @ " ORDER BY lc.active DESC, TIMESTAMPDIFF(MINUTE,c.LastUpdated,CURRENT_TIMESTAMP) DESC LIMIT 1");
-
-  }
-
   function LiFxFullServerFixVIP::onConnectClient(%this, %client) {
     dbi.Update("UPDATE `character` SET LastUpdated = now() WHERE id=" @ %client.getCharacterId());
   }
@@ -61,7 +55,7 @@ package LiFxFullServerFixVIP
           Name = %name;
         };
         %client.ConnectedTime = getUnixTime();
-        
+        dbi.Select(LiFxFullServerFixVIP, "AFKKick", "SELECT c.ID AS ClientId, lc.active as Active FROM `lifx_character` lc LEFT JOIN `character` c ON c.ID = lc.id WHERE TIMESTAMPDIFF(MINUTE,c.LastUpdated,CURRENT_TIMESTAMP) > " @ $LiFx::FullServerFixIdleTimeout @ " ORDER BY lc.active DESC, TIMESTAMPDIFF(MINUTE,c.LastUpdated,CURRENT_TIMESTAMP) DESC LIMIT 1");
     }
     dbi.Update("UPDATE `character` SET LastUpdated = now() WHERE AccountID=" @ %client.getAccountId());
   }
@@ -71,12 +65,11 @@ package LiFxFullServerFixVIP
     {
       %ClientID = %rs.getFieldValue("ClientID");
       %Active = %rs.getFieldValue("Active");
-      %ClientVIP = %rs.getFieldValue("ClientVIP");
 
       for(%id = 0; %id < ClientGroup.getCount(); %id++)
       {
         %client = ClientGroup.getObject(%id);
-        if(%client.ConnectedTime <= (getUnixTime() - 60) && !isObject(%client.Player) && %client != LiFxFullServerFixVIP.ConReq.client && !%ClientVIP)
+        if(%client.ConnectedTime <= (getUnixTime() - 60) && !isObject(%client.Player) && %client != LiFxFullServerFixVIP.ConReq.client)
         {
           %client.scheduleDelete("You have been ejected from the server due to inactivity (AFK)", 100);
           break;
