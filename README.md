@@ -1,4 +1,4 @@
-# FullServerFixVIPV1.0.1
+# FullServerFixVIPV1.0.1-AFKKICKER
 
 ### Installation Instructions
 
@@ -11,8 +11,7 @@ Place the mod into the mods folder.
 
 To USE this mod open your Database table "account"
 
-Set VIPFlag Column for the Account you wish to have as a VIP, Please check with the steam ID Before Issuing.
-- When the server is full when a person with a vip flag attempts to join the server, any AFK Player will be removed from the game to allow VIP Access
+- When a player attempts to join the full server, the character with the most idle time over 1 hour will be kicked out to make room for the new player.
 
 This is useful for heavily populated servers as alot of people will sit on the server afk for hours otherwise!
 
